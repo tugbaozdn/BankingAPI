@@ -1,0 +1,147 @@
+#%RAML 1.0
+title: Sapi
+
+
+types:
+  user: !include types/UserDataType.raml
+  account: !include types/AccountDataType.raml
+
+# traits:
+#   Identifiable:
+#     headers:
+#       client_id:
+#       client_secret:
+
+
+/users:
+  # is:
+  #   - Identifiable
+  get:
+    # queryParameters:
+    #   lastName:
+    #     required: false
+    #     enum:
+    #       - S
+    #       - L
+    #       - C
+    responses:
+      200:
+        body:
+          application/json:
+            type: user[]
+            examples:
+              output: !include examples/UsersExample.raml
+  post:
+    body:
+      application/json:
+        type: user
+        examples:
+          input: !include /examples/UserNoIdExample.raml
+    responses:
+      201:
+        body:
+          application/json:
+            example:
+              message: User added 
+
+  /{ID}:
+    # is:
+    #   - Identifiable
+    uriParameters:
+      ID:
+        type: integer
+        minimum: 1
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+              type: user
+              examples:
+                output: !include examples/UserExample.raml
+    delete:
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                message: User deleted 
+    put:
+      body:
+        application/json:
+          type: user
+          examples:
+            input: !include /examples/UserNoIdExample.raml
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                message: User updated 
+/accounts:
+  # is:
+  #   - Identifiable
+  get:
+    # queryParameters:
+    #   lastName:
+    #     required: false
+    #     enum:
+    #       - S
+    #       - L
+    #       - C
+    responses:
+      200:
+        body:
+          application/json:
+            type: account[]
+            examples:
+              output: !include examples/AccountsExample.raml
+  post:
+    body:
+      application/json:
+        type: account
+        examples:
+          input: !include /examples/AccountNoIdExample.raml
+    responses:
+      201:
+        body:
+          application/json:
+            example:
+              message: Account added 
+
+  /{ID}:
+    # is:
+    #   - Identifiable
+    uriParameters:
+      ID:
+        type: integer
+        minimum: 1
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+              type: account
+              examples:
+                output: !include /examples/AccountExample.raml
+    delete:
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                message: Account deleted 
+    put:
+      body:
+        application/json:
+          type: account
+          examples:
+            input: !include examples/AccountNoIdExample.raml
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                message: Account updated 
+      
+
