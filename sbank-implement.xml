@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="sbank-get-users" doc:id="454b4c72-f42c-40ad-9361-f6884d4915b9" >
+		<db:select doc:name="Select" doc:id="49eb2c7e-81c2-4964-8aa9-51c7d5cf8e48" config-ref="Database_Config">
+			<db:sql ><![CDATA[Select user_id,first_name,last_name,user_email from users]]></db:sql>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="c1847c56-6058-4d6a-aafb-d219e0c704a9" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map ( payload01 , indexOfPayload01 ) -> {
+	userId: payload01.user_id,
+	firstName: payload01.first_name,
+	lastName: payload01.last_name,
+	email: payload01.user_email
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="sbank-get-user-by-ID" doc:id="1d2aa83c-da0f-449f-adbf-c777fd1d238b" >
+		<db:select doc:name="Select" doc:id="7a48f7e9-4a93-4919-b7c7-19b69330a460" config-ref="Database_Config">
+			<db:sql ><![CDATA[SELECT first_name,last_name,user_email FROM users WHERE user_id=:userId]]></db:sql>
+			<db:input-parameters ><![CDATA[#[output application/json
+---
+{
+	userId: (attributes.uriParams.userId
+default 0) + payload.userId
+}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="0a132a66-a21b-449a-8919-dcfbbba74d9d" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map ( payload01 , indexOfPayload01 ) -> {
+	userId: payload01.user_id,
+	firstName: payload01.first_name,
+	lastName: payload01.last_name,
+	email: payload01.user_email
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
